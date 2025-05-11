@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vásárlók listája</title>
+</head>
+<body>
+<h1>Vásárlók listája</h1>
+<ul>
+    <li th:each="customer : ${customers}">
+        <span th:text="${customer.name}"></span> - <span th:text="${customer.email}"></span>
+        <a th:href="@{/customers/{id}(id=${customer.id})}">Részletek</a>
+        <form th:action="@{/customers/{id}(id=${customer.id})}" method="post">
+            <input type="submit" value="Törlés" />
+        </form>
+    </li>
+</ul>
+<a href="/customers/new">Új vásárló hozzáadása</a>
+</body>
+</html>

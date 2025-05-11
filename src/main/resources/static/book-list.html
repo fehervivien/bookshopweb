@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Könyvek listája</title>
+</head>
+<body>
+<h1>Könyvek listája</h1>
+<ul>
+    <li th:each="book : ${books}">
+        <span th:text="${book.title}"></span> - <span th:text="${book.author}"></span>
+        <a th:href="@{/books/{id}(id=${book.id})}">Részletek</a>
+    </li>
+</ul>
+<a href="/books/new">Új könyv hozzáadása</a>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rendelés részletei</title>
+</head>
+<body>
+<h1>Rendelés: <span th:text="${order.book.title}"></span></h1>
+<p>Vásárló: <span th:text="${order.customer.name}"></span></p>
+<p>Rendelési dátum: <span th:text="${order.orderDate}"></span></p>
+<a href="/orders">Vissza a rendelés listájához</a>
+</body>
+</html>
