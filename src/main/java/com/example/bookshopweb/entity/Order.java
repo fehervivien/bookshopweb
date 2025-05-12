@@ -1,7 +1,6 @@
 package com.example.bookshopweb.entity;
 
 import java.time.LocalDate;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,46 +10,35 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /*
-    Az Order osztály a rendszerben rögzített könyvrendeléseket (megrendeléseket)
-    képviseli (orders tábla). A JPA (Java Persistence API) segítségével tárolja
-    az adatokat.
+ * Az Order osztály a rendszerben rögzített könyvrendeléseket
+ * (megrendeléseket) képviseli (orders tábla).
+ * A JPA (Java Persistence API) segítségével tárolja az adatokat.
 */
 
-// Ez az osztály egy JPA entitás (az adatbázis egyik táblájának felel meg)
+
 @Entity
-// Az adatbázisban az "orders" nevű táblához lesz leképezve
 @Table(name = "orders")
 
 public class Order {
-
-    // Id: a tábla elsődleges kulcsa (primary key)
     @Id
-    // Az adatbázis automatikusan generálja az id-t
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    // Az id mező
     private Long id;
-    // A rendelés dátuma
     private LocalDate orderDate;
 
     // Egy rendelés egy vásárlóhoz (Customer) tartozik
     @ManyToOne
-    // Az adatbázisban a kapcsolódó customer_id oszlopot használja
     @JoinColumn(name = "customer_id")
 
-    // Vásárló (Customer) entitás
     private Customer customer;
 
     // Egy rendelés egy könyvhöz (Book) kapcsolódik
     @ManyToOne
-    // Az adatbázisban a kapcsolódó book_id oszlopot használja
     @JoinColumn(name = "book_id")
     private Book book;
 
-    /*
-     * Alapértelmezett konstruktor (JPA-hoz szükséges, hogy üresen is létre
-     * lehessen hozni az objektumot)
-     */
+
+     // Alapértelmezett konstruktor (JPA-hoz szükséges)
     public Order() {
     }
 
@@ -90,14 +78,14 @@ public class Order {
         this.book = book;
     }
 
-    // equals: két Order objektumot azonosnak tekintünk, ha az id-jük megegyezik
+
     @Override
+    // equals: összehasonlítja az Order objektumokat
     public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        // a paramétert Order típusúra konvertáljuk
         Order order = (Order) o;
         return id != null && id.equals(order.id);
     }

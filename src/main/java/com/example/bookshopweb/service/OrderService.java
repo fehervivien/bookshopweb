@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.example.bookshopweb.entity.Order;
 
 /*
-    Ez az interfész meghatározza,
-    hogy milyen műveletek végezhetők el a rendelések (Order) kezelésére
+ * Ez az interfész meghatározza, hogy milyen műveletek
+ * végezhetők el a rendelések (Order) kezelésére
 */
 
 public interface OrderService {
@@ -24,7 +24,9 @@ public interface OrderService {
     // Rendelés törlése ID alapján
     void deleteById(Long id);
 
+    // Rendelés keresése ID alapján
     Optional<Order> getOrderById(long l);
 
+    // Rendelés keresése felhasználó ID alapján
     List<Order> getAllOrders();
 }

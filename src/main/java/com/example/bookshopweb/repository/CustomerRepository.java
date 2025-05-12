@@ -8,8 +8,8 @@ import com.example.bookshopweb.entity.Customer;
 import org.springframework.stereotype.Repository;
 
 /*
-    A CustomerRepository.java interfész a vásárlók kezelésére szolgál,
-    és örökli a JpaRepository összes CRUD funkcióját (ugyanúgy, mint a BookRepository)
+ * A CustomerRepository.java interfész a vásárlók kezelésére
+ * szolgál, és örökli a JpaRepository összes CRUD funkcióját
 */
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {

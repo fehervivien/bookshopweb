@@ -20,9 +20,8 @@ import com.example.bookshopweb.service.CustomerService;
  * A Spring MVC keretrendszer segítségével valósítja meg a HTTP kérések kezelését.
  */
 
-//Ez az osztály vezérlőként működik a Spring MVC keretrendszerben.
+
 @Controller
-//Az összes vásárlóval kapcsolatos kérést a "/customers" URL-re irányítja.
 @RequestMapping("/customers")
 
 public class CustomerController {
@@ -34,55 +33,37 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    // -----------------------
     // Vásárló létrehozása
-    // -----------------------
     @PostMapping
     public String createCustomer(Customer customer) {
-        // vásárló mentése
         customerService.saveCustomer(customer);
-        // Visszairányítás a vásárlók listájához
         return "redirect:/customers";
     }
 
-    // -----------------------
     // Összes vásárló lekérdezése
-    // -----------------------
     @GetMapping
     public String getAllCustomers(Model model) {
-        // vásárlók lekérdezése
         List<Customer> customers = customerService.getAllCustomers();
-        // Vásárlók listájának hozzáadása a modelhez
         model.addAttribute("customers", customers);
-        // Visszatérés a "customer-list" nevű Thymeleaf sablonhoz
         return "customer-list";
     }
 
-    // -----------------------
     // Vásárló lekérdezése ID alapján
-    // -----------------------
     @GetMapping("/{id}")
     public String getCustomerById(@PathVariable Long id, Model model) {
-        // vásárló lekérdezése
         Customer customer = customerService.getCustomerById(id).orElse(null);
         if (customer != null) {
             model.addAttribute("customer", customer);
-            // Visszatérés a "customer-detail" sablonhoz
             return "customer-detail";
         } else {
-            // Ha nem található, visszairányítjuk a vásárlók listájához
             return "redirect:/customers";
         }
     }
 
-    // -----------------------
     // Vásárló törlése
-    // -----------------------
     @DeleteMapping("/{id}")
     public String deleteCustomer(@PathVariable Long id) {
-        // törlés
         customerService.deleteCustomer(id);
-        // Törlés után visszairányítjuk a vásárlók listájához
         return "redirect:/customers";
     }
 }

@@ -1,0 +1,3 @@
+mvn clean test jacoco:report
+
+tree /F /A
