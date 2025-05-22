@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.service;
+package com.example.bookshopweb.service;
 
 import com.example.bookshopweb.entity.Book;
 import com.example.bookshopweb.entity.Customer;
@@ -124,4 +124,3 @@ class OrderServiceImplTest {
         assertThrows(RuntimeException.class, () -> orderService.findById(nonExistentOrderId));
     }
 }
-*/

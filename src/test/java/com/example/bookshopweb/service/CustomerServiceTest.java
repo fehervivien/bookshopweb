@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.service;
+package com.example.bookshopweb.service;
 
 import com.example.bookshopweb.entity.Customer;
 import com.example.bookshopweb.repository.CustomerRepository;
@@ -40,4 +40,3 @@ class CustomerServiceTest {
         assertEquals(1L, result.get().getId());
     }
 }
-*/

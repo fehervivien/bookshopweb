@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.repository;
+package com.example.bookshopweb.repository;
 
 import com.example.bookshopweb.entity.Customer;
 import org.junit.jupiter.api.DisplayName;
@@ -52,4 +52,4 @@ class CustomerRepositoryTest {
 
         assertThat(deletedCustomer).isNotPresent();
     }
-}*/
+}

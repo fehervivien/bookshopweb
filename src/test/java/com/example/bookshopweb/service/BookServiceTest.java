@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.service;
+package com.example.bookshopweb.service;
 
 import com.example.bookshopweb.entity.Book;
 import com.example.bookshopweb.repository.BookRepository;
@@ -39,5 +39,5 @@ class BookServiceTest {
         assertTrue(result.isPresent());
         assertEquals(1L, result.get().getId());
     }
-}*/
+}
 

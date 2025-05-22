@@ -1,3 +1,9 @@
 mvn clean test jacoco:report
-
 tree /F /A
+http://localhost:8080/books/list
+
+INSERT INTO BOOK (title, author, price, isbn, description, cover_url) VALUES
+('Java programming', 'Joyce Farrell', 38432.0, '978-1234567890', 'A Java programozás alapjai és haladó technikái.', 'https://m.media-amazon.com/images/I/51I5+jy2xGL._SL1200_.jpgBOOK BOOK ');
+
+INSERT INTO BOOK (title, author, price, isbn, description, cover_url) VALUES
+('proba', 'proba', 3700, '1534679707', 'proba', '');

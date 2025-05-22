@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.service;
+package com.example.bookshopweb.service;
 
 import com.example.bookshopweb.entity.Order;
 import com.example.bookshopweb.repository.OrderRepository;
@@ -89,4 +89,3 @@ class OrderServiceTest {
         verify(orderRepository, times(1)).deleteById(orderId);
     }
 }
-*/

@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.entity;
+package com.example.bookshopweb.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,4 +52,4 @@ public class CustomerTest {
         assertNotEquals(customer, "string");
     }
 }
-*/
+

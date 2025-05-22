@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.controller;
+package com.example.bookshopweb.controller;
 
 import com.example.bookshopweb.entity.Order;
 import com.example.bookshopweb.service.OrderService;
@@ -41,7 +41,6 @@ class OrderControllerTest {
         order.setId(orderId);
         when(orderService.findById(orderId)).thenReturn(order);
 
-        // When & Then
         mockMvc.perform(get("/orders/{id}", orderId))
                 .andExpect(status().isOk());
 
@@ -49,4 +48,3 @@ class OrderControllerTest {
         verify(orderService).findById(orderId);
     }
 }
-*/

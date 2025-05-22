@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.entity;
+package com.example.bookshopweb.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,4 +74,4 @@ public class OrderTest {
         String expected = "Order{id=5, orderDate=2025-05-05}";
         assertEquals(expected, order.toString());
     }
-}*/
+}

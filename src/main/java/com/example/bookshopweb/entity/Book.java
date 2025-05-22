@@ -7,39 +7,35 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-/*
- * A Book osztály a könyvek entitását reprezentálja az adatbázisban.
- * Az osztály tartalmazza a könyv adatait, mint például a címét,
- * szerzőjét és árát.
- * A JPA annotációk segítségével az osztály összekapcsolható az
- * adatbázissal.
- * Serializable interfész: Az objektumok sorosíthatók legyenek (mentés fájlba vagy adatbázisba).
-*/
-
 
 @Entity
-public class Book implements Serializable { //
+public class Book implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    private String author;
+    private double price;
 
-    private Long id; // Az 'id' mező egyedi azonosítója a könyvnek
-    private String title; // A könyv címe
-    private String author; // A könyv szerzője
-    private double price; // A könyv ára
+    // HIÁNYZÓ MEZŐK HOZZÁADÁSA:
+    private String isbn;
+    private String description;
+    private String coverUrl;
 
-    // Az alapértelmezett konstruktor szükséges a JPA számára
     public Book() {
     }
 
-    // Paraméteres konstruktor az új könyvek egyszerű
-    // létrehozásához
-    public Book(String title, String author, double price) {
+    // Paraméteres konstruktor frissítése, ha szükséges, vagy egyszerűen használd a settereket
+    public Book(String title, String author, double price, String isbn, String description, String coverUrl) {
         this.title = title;
         this.author = author;
         this.price = price;
+        this.isbn = isbn;
+        this.description = description;
+        this.coverUrl = coverUrl;
     }
 
-    // Getterek és setterek
+    // Getterek és setterek (ezeket ki kell egészíteni az új mezőkkel)
     public Long getId() {
         return id;
     }
@@ -72,10 +68,31 @@ public class Book implements Serializable { //
         this.price = price;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
 
     @Override
-    // Az equals() metódus a könyv azonosítóját használja
-    // az összehasonlításhoz.
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -85,8 +102,6 @@ public class Book implements Serializable { //
         return Objects.equals(id, book.id);
     }
 
-    // A hashCode() metódus a könyv azonosítóját használja
-    // a hash kód generálásához.
     @Override
     public int hashCode() {
         return Objects.hash(id);

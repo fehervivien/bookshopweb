@@ -1,4 +1,4 @@
-/*package com.example.bookshopweb.entity;
+package com.example.bookshopweb.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,4 +54,4 @@ public class BookTest {
         assertNotEquals(book, null);      // null-lal nem egyenlő
         assertNotEquals(book, "string");  // más típussal sem
     }
-}*/
+}
