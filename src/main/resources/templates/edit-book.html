@@ -12,7 +12,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid" th:style="'background: url(' + @{/header.jpg} + ');'">
         <a class="navbar-brand" href="#">
-            <img th:src="@{/bookshop.jpg}" alt="Bookshop Logo" class="logo" style="width: 150px; height: 150px;">
+            <img th:src="@{/book.jpg}" alt="Book Logo" class="logo" style="width: 150px; height: 150px;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -30,8 +30,7 @@
 <div class="container my-5">
     <h2 class="text-center mb-4">Könyv szerkesztése</h2>
 
-    <form th:action="@{/books/{id}(id=${book.id})}" th:object="${book}" method="post">
-        <input type="hidden" name="_method" value="put" />
+    <form th:action="@{/books/update/{id}(id=${book.id})}" th:object="${book}" method="post">
 
         <input type="hidden" th:field="*{id}" />
 

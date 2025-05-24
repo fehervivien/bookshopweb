@@ -12,7 +12,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid" th:style="'background: url(' + @{/header.jpg} + ');'">
     <a class="navbar-brand" href="#">
-      <img th:src="@{/bookshop.jpg}" alt="Bookshop Logo" class="logo" style="width: 150px; height: 150px;">
+      <img th:src="@{/book.jpg}" alt="Book Logo" class="logo" style="width: 150px; height: 150px;">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -45,8 +45,8 @@
 
           <div class="mt-4">
             <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-warning me-2">Szerkesztés</a>
-            <form th:action="@{/books/{id}(id=${book.id})}" method="post" style="display:inline;">
-              <input type="hidden" name="_method" value="delete" /> <button type="submit" class="btn btn-danger" onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?');">Törlés</button>
+            <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-danger" onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?');">Törlés</button>
             </form>
           </div>
           <a th:href="@{/books/list}" class="btn btn-secondary mt-3">Vissza a listához</a>
