@@ -1,21 +1,34 @@
 package com.example.bookshopweb.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects; // Importáld az Objects osztályt
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true) // A felhasználónév legyen egyedi
     private String username;
+    private String password;
+    private String roles; // Ha szerepköröket is használsz
 
-    private String password; // A jelszót hashelve tároljuk!
+    // Konstruktorok
+    public User() {}
 
-    // Getters and Setters
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+    // Ha szerepköröket is használsz:
+    public User(String username, String password, String roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    // Getterek és setterek
     public Long getId() {
         return id;
     }
@@ -40,14 +53,25 @@ public class User {
         this.password = password;
     }
 
-    // Opcionális: Szerepkörök, ha később bevezeted
-    // private String role; // pl. "ROLE_USER", "ROLE_ADMIN"
+    public String getRoles() {
+        return roles;
+    }
 
-    // Konstruktorok (opcionális, de hasznos)
-    public User() {}
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+    // FONTOS: equals() és hashCode() metódusok a User entitáshoz
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id); // Összehasonlítás az ID alapján
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Hash az ID alapján
     }
 }

@@ -1,15 +1,14 @@
 package com.example.bookshopweb.repository;
 
-import org.springframework.context.annotation.Bean;
+import com.example.bookshopweb.entity.Book;
+import com.example.bookshopweb.entity.User; // Importáld a User entitást
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.example.bookshopweb.entity.Book;
 
-/*
- * A könyvek kezelésére szolgál, és örökli a JpaRepository
- * összes CRUD (Create,Read,Update,Delete) funkcióját
-*/
+import java.util.List;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
+    // Új metódus: Könyvek lekérése felhasználó alapján
+    List<Book> findByUser(User user);
 }

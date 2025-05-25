@@ -1,91 +1,136 @@
 package com.example.bookshopweb.controller;
 
-import java.util.List;
-
+import com.example.bookshopweb.entity.Book;
+import com.example.bookshopweb.entity.User; // Importáld a User entitást
+import com.example.bookshopweb.service.BookService;
+import com.example.bookshopweb.repository.UserRepository; // Importáld a UserRepository-t
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication; // Importáld az Authentication-t
+import org.springframework.security.core.context.SecurityContextHolder; // Importáld a SecurityContextHolder-t
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping; // Ezt már nem használjuk, de bent maradhat
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping; // Ezt fogjuk használni a PUT/DELETE helyett
-import org.springframework.web.bind.annotation.PutMapping; // Ezt már nem használjuk, de bent maradhat
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.bookshopweb.entity.Book;
-import com.example.bookshopweb.service.BookService;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
 public class BookController {
 
     private final BookService bookService;
+    private final UserRepository userRepository; // UserRepository injektálása
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, UserRepository userRepository) {
         this.bookService = bookService;
+        this.userRepository = userRepository;
     }
 
-    // Új könyv hozzáadás űrlap megjelenítése
+    // Könyvek listázása - Csak a bejelentkezett felhasználó könyvei
+    @GetMapping("/list")
+    public String listBooks(Model model) {
+        // A bejelentkezett felhasználó lekérdezése
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Ez a bejelentkezett felhasználóneve
+
+        User currentUser = userRepository.findByUsername(username); // Felhasználó objektum lekérése
+        if (currentUser != null) {
+            model.addAttribute("books", bookService.getBooksByUser(currentUser)); // Szűrt lista
+        } else {
+            // Ez elvileg nem fordulhat elő, ha a felhasználó hitelesített
+            model.addAttribute("books", bookService.getAllBooks()); // Vissza az összes könyvet, ha valami hiba van a felhasználóval
+        }
+        return "book-list";
+    }
+
+    // Új könyv hozzáadása (GET)
     @GetMapping("/add")
-    public String showAddForm(Model model) {
+    public String showAddBookForm(Model model) {
         model.addAttribute("book", new Book());
         return "add-book";
     }
 
-    // Könyv létrehozása (a /books/add űrlapról jövő POST kérés)
+    // Új könyv hozzáadása (POST) - Felhasználó hozzárendelése
     @PostMapping("/add")
-    public String createBook(@ModelAttribute Book book) {
-        bookService.saveBook(book);
+    public String addBook(@ModelAttribute Book book) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User currentUser = userRepository.findByUsername(username);
+        if (currentUser != null) {
+            bookService.saveBook(book, currentUser); // Könyv mentése a felhasználóval
+        } else {
+            // Ha valamiért nincs felhasználó (nem kéne megtörténjen)
+            bookService.saveBook(book); // Mentés felhasználó nélkül (ez nem jó hosszú távon)
+        }
         return "redirect:/books/list";
     }
 
-    // Összes könyv lekérdezése
-    @GetMapping("/list")
-    public String getAllBooks(Model model) {
-        List<Book> books = bookService.getAllBooks();
-        model.addAttribute("books", books);
-        return "book-list";
-    }
-
-    // Egy könyv lekérdezése ID alapján (részletes nézet)
+    // Könyv részletei (nincs változás, de itt is lehetne ellenőrizni, hogy a felhasználóhoz tartozik-e)
     @GetMapping("/{id}")
-    public String getBookById(@PathVariable Long id, Model model) {
-        Book book = bookService.getBookById(id);
-        if (book != null) {
-            model.addAttribute("book", book);
-            return "book-detail";
+    public String viewBookDetails(@PathVariable Long id, Model model) {
+        Optional<Book> bookOptional = bookService.getBookById(id);
+        if (bookOptional.isPresent()) {
+            model.addAttribute("book", bookOptional.get());
         } else {
-            return "redirect:/books/list";
+            model.addAttribute("errorMessage", "A keresett könyv nem található.");
         }
+        return "book-detail";
     }
 
-    // Könyv szerkesztési űrlapjának megjelenítése
+    // Könyv szerkesztése (GET) - Ellenőrzés, hogy a felhasználóé-e
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Book book = bookService.getBookById(id);
-        if (book != null) {
-            model.addAttribute("book", book);
+    public String showEditBookForm(@PathVariable Long id, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+
+        Optional<Book> bookOptional = bookService.getBookById(id);
+        if (bookOptional.isPresent() && currentUser != null && bookOptional.get().getUser() != null && bookOptional.get().getUser().equals(currentUser)) {
+            model.addAttribute("book", bookOptional.get());
             return "edit-book";
         } else {
-            return "redirect:/books/list";
+            // Ha a könyv nem található, vagy nem a felhasználóé
+            return "redirect:/books/list"; // Vissza a listához
         }
     }
 
-    // Könyv frissítése (MOST POST metódussal, dedikált URL-el)
+    // Könyv szerkesztése (POST) - Ellenőrzés, hogy a felhasználóé-e
     @PostMapping("/update/{id}")
-    public String updateBook(@PathVariable Long id, @ModelAttribute Book book) {
-        book.setId(id);
-        bookService.saveBook(book);
-        return "redirect:/books/list";
+    public String updateBook(@PathVariable Long id, @ModelAttribute Book updatedBook) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+
+        Optional<Book> existingBookOptional = bookService.getBookById(id);
+        if (existingBookOptional.isPresent() && currentUser != null && existingBookOptional.get().getUser() != null && existingBookOptional.get().getUser().equals(currentUser)) {
+            Book existingBook = existingBookOptional.get();
+            // Frissítsd a mezőket
+            existingBook.setTitle(updatedBook.getTitle());
+            existingBook.setAuthor(updatedBook.getAuthor());
+            existingBook.setIsbn(updatedBook.getIsbn());
+            existingBook.setDescription(updatedBook.getDescription());
+            existingBook.setCoverUrl(updatedBook.getCoverUrl());
+            existingBook.setPrice(updatedBook.getPrice());
+            // A felhasználó nem változhat meg
+            bookService.saveBook(existingBook);
+            return "redirect:/books/list";
+        } else {
+            return "redirect:/books/list"; // Nincs jogosultság vagy nem található
+        }
     }
 
-    // Könyv törlése (MOST POST metódussal, dedikált URL-el)
-    // A HtmL-ben is a /books/delete/{id} POST kérésre fog mutatni az űrlap
+    // Könyv törlése (POST) - Ellenőrzés, hogy a felhasználóé-e
     @PostMapping("/delete/{id}")
     public String deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+
+        Optional<Book> bookOptional = bookService.getBookById(id);
+        if (bookOptional.isPresent() && currentUser != null && bookOptional.get().getUser() != null && bookOptional.get().getUser().equals(currentUser)) {
+            bookService.deleteBook(id);
+        }
         return "redirect:/books/list";
     }
 }

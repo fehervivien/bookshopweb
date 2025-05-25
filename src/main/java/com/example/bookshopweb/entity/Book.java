@@ -1,41 +1,40 @@
 package com.example.bookshopweb.entity;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
-public class Book implements Serializable {
+@Table(name = "books")
+public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String author;
-    private double price;
-
-    // HIÁNYZÓ MEZŐK HOZZÁADÁSA:
     private String isbn;
     private String description;
     private String coverUrl;
+    private Double price;
 
+    // Új mező: Kapcsolat a felhasználóval
+    @ManyToOne(fetch = FetchType.LAZY) // Sok könyv tartozik egy felhasználóhoz
+    @JoinColumn(name = "user_id") // A foreign key oszlop neve az 'books' táblában
+    private User user; // A könyvet hozzáadó felhasználó
+
+    // --- Konstruktorok ---
     public Book() {
     }
 
-    // Paraméteres konstruktor frissítése, ha szükséges, vagy egyszerűen használd a settereket
-    public Book(String title, String author, double price, String isbn, String description, String coverUrl) {
+    public Book(String title, String author, String isbn, String description, String coverUrl, Double price) {
         this.title = title;
         this.author = author;
-        this.price = price;
         this.isbn = isbn;
         this.description = description;
         this.coverUrl = coverUrl;
+        this.price = price;
     }
 
-    // Getterek és setterek (ezeket ki kell egészíteni az új mezőkkel)
+    // --- Getterek és Setterek ---
     public Long getId() {
         return id;
     }
@@ -58,14 +57,6 @@ public class Book implements Serializable {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public String getIsbn() {
@@ -92,18 +83,20 @@ public class Book implements Serializable {
         this.coverUrl = coverUrl;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Book book = (Book) o;
-        return Objects.equals(id, book.id);
+    public Double getPrice() {
+        return price;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    // Új getter és setter a felhasználóhoz
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

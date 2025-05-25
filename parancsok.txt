@@ -7,3 +7,5 @@ INSERT INTO BOOK (title, author, price, isbn, description, cover_url) VALUES
 
 INSERT INTO BOOK (title, author, price, isbn, description, cover_url) VALUES
 ('proba', 'proba', 3700, '1534679707', 'proba', '');
+
+a book-detail, tehár a könyv részleteinél nem jelenik meg a css-ek de maga a style.css bevan importálva a böngészőnél is

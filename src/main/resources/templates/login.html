@@ -3,26 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bejelentkezés - Könyvtár</title>
+    <title th:fragment="title">Bejelentkezés - Könyvtár</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/style.css}">
+    <th:block th:fragment="headExtra"></th:block>
 </head>
 <body>
 
 <div class="container my-5">
     <h2 class="text-center mb-4">Bejelentkezés</h2>
 
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <p th:text="${errorMessage}"></p>
+    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        <p>Hibás felhasználónév vagy jelszó!</p>
     </div>
-    <div th:if="${message}" class="alert alert-info" role="alert">
-        <p th:text="${message}"></p>
+    <div th:if="${param.logout}" class="alert alert-info" role="alert">
+        <p>Sikeresen kijelentkezett.</p>
     </div>
+    <div th:if="${param.registered}" class="alert alert-success" role="alert">
+        <p>Sikeres regisztráció! Kérjük, jelentkezzen be.</p>
+    </div>
+
 
     <form th:action="@{/login}" method="post">
         <div class="mb-3">
             <label for="username" class="form-label">Felhasználónév:</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <input type="text" class="form-control" id="username" name="username" required autofocus>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Jelszó:</label>
