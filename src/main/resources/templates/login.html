@@ -7,36 +7,74 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/style.css}">
     <th:block th:fragment="headExtra"></th:block>
+    <style>
+        /* Egyedi stílusok a login/regisztrációs űrlaphoz */
+        body {
+            background-color: #f8f9fa; /* Világos háttérszín */
+            background-image: url('/hatter.jpg');
+        }
+        .login-container {
+            /* A max-width-et innen kivesszük, mert a Bootstrap oszlopok kezelik a szélességet */
+            padding: 40px; /* Belső margó */
+            border-radius: 10px; /* Lekerekített sarkok */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Finom árnyék */
+            background-color: #ffffff; /* Fehér háttér */
+        }
+        .login-container h2 {
+            margin-bottom: 30px;
+            color: #343a40; /* Sötétebb cím szín */
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            width: 100%; /* Gomb teljes szélességű */
+            padding: 10px;
+            font-size: 1.1rem;
+            margin-top: 20px; /* Felső margó a gombnak */
+        }
+        .mt-3 a {
+            color: #007bff; /* Link színe */
+            text-decoration: none;
+        }
+        .mt-3 a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container my-5">
-    <h2 class="text-center mb-4">Bejelentkezés</h2>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="login-container col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto">
+        <h2 class="text-center">Bejelentkezés</h2>
 
-    <div th:if="${param.error}" class="alert alert-danger" role="alert">
-        <p>Hibás felhasználónév vagy jelszó!</p>
-    </div>
-    <div th:if="${param.logout}" class="alert alert-info" role="alert">
-        <p>Sikeresen kijelentkezett.</p>
-    </div>
-    <div th:if="${param.registered}" class="alert alert-success" role="alert">
-        <p>Sikeres regisztráció! Kérjük, jelentkezzen be.</p>
-    </div>
-
-
-    <form th:action="@{/login}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Felhasználónév:</label>
-            <input type="text" class="form-control" id="username" name="username" required autofocus>
+        <div th:if="${param.error}" class="alert alert-danger text-center" role="alert">
+            Hibás felhasználónév vagy jelszó!
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Jelszó:</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+        <div th:if="${param.logout}" class="alert alert-info text-center" role="alert">
+            Sikeresen kijelentkezett.
         </div>
-        <button type="submit" class="btn btn-primary">Bejelentkezés</button>
-        <p class="mt-3">Nincs fiókja? <a th:href="@{/register}">Regisztráljon itt</a></p>
-    </form>
+        <div th:if="${param.registered}" class="alert alert-success text-center" role="alert">
+            Sikeres regisztráció! Kérjük, jelentkezzen be.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Felhasználónév:</label>
+                <input type="text" class="form-control" id="username" name="username" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Jelszó:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Bejelentkezés</button>
+            <p class="mt-3 text-center">Nincs fiókja? <a th:href="@{/register}">Regisztráljon itt</a></p>
+        </form>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

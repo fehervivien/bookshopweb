@@ -7,33 +7,71 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/style.css}">
     <th:block th:fragment="headExtra"></th:block>
+    <style>
+        /* Egyedi stílusok a login/regisztrációs űrlaphoz */
+        body {
+            background-color: #f8f9fa; /* Világos háttérszín */
+            background-image: url('/hatter.jpg');
+        }
+        .login-container { /* Használjuk ugyanazt az osztálynevet, mert hasonló a stílus */
+            padding: 40px; /* Belső margó */
+            border-radius: 10px; /* Lekerekített sarkok */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Finom árnyék */
+            background-color: #ffffff; /* Fehér háttér */
+        }
+        .login-container h2 {
+            margin-bottom: 30px;
+            color: #343a40; /* Sötétebb cím szín */
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            width: 100%; /* Gomb teljes szélességű */
+            padding: 10px;
+            font-size: 1.1rem;
+            margin-top: 20px; /* Felső margó a gombnak */
+        }
+        .mt-3 a {
+            color: #007bff; /* Link színe */
+            text-decoration: none;
+        }
+        .mt-3 a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container my-5">
-    <h2 class="text-center mb-4">Regisztráció</h2>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="login-container col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto">
+        <h2 class="text-center">Regisztráció</h2>
 
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <p th:text="${errorMessage}"></p>
+        <div th:if="${errorMessage}" class="alert alert-danger text-center" role="alert">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/register}" th:object="${user}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Felhasználónév:</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Jelszó:</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" required>
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Jelszó megerősítése:</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Regisztráció</button>
+            <p class="mt-3 text-center">Már van fiókja? <a th:href="@{/login}">Jelentkezzen be itt</a></p>
+        </form>
     </div>
-
-    <form th:action="@{/register}" th:object="${user}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Felhasználónév:</label>
-            <input type="text" class="form-control" id="username" th:field="*{username}" required autofocus>
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Jelszó:</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}" required>
-        </div>
-        <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Jelszó megerősítése:</label>
-            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Regisztráció</button>
-        <p class="mt-3">Már van fiókja? <a th:href="@{/login}">Jelentkezzen be itt</a></p>
-    </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

@@ -1,46 +1,45 @@
 <!DOCTYPE html>
-<html lang="hu" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{index :: layoutHead(~{::title}, ~{::headExtra})}"> <title>Új könyv hozzáadása - Könyvtár</title> <th:block th:fragment="headExtra">
+<html lang="hu" xmlns:th="http://www.thymeleaf.org"> <head th:replace="~{index :: layoutHead(~{::pageTitle}, ~{::headExtra})}"> <th:block th:fragment="pageTitle"> Új könyv hozzáadása - Könyvtár
 </th:block>
+    <th:block th:fragment="headExtra">
+    </th:block>
 </head>
 <body>
 
-<div th:replace="~{index :: body(mainContent='~{::mainContent}', title='~{::title}', headExtra='~{::headExtra}', bodyExtra='~{::bodyExtra}')}">
+<div th:replace="~{index :: body(mainContent='~{::mainContent}', title='~{::pageTitle}', headExtra='~{::headExtra}', bodyExtra='~{::bodyExtra}')}"> <th:block th:fragment="mainContent">
+    <h2 class="text-center mb-4">Új könyv hozzáadása</h2>
 
-    <th:block th:fragment="mainContent">
-        <h2 class="text-center mb-4">Új könyv hozzáadása</h2>
+    <form th:action="@{/books/add}" th:object="${book}" method="post">
+        <div class="mb-3">
+            <label for="title" class="form-label">Cím:</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" required>
+        </div>
+        <div class="mb-3">
+            <label for="author" class="form-label">Szerző:</label>
+            <input type="text" class="form-control" id="author" th:field="*{author}" required>
+        </div>
+        <div class="mb-3">
+            <label for="isbn" class="form-label">ISBN:</label>
+            <input type="text" class="form-control" id="isbn" th:field="*{isbn}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Leírás:</label>
+            <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="coverUrl" class="form-label">Borítókép URL:</label>
+            <input type="url" class="form-control" id="coverUrl" th:field="*{coverUrl}">
+            <small class="form-text text-muted">Pl. https://example.com/cover.jpg</small>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Ár:</label>
+            <input type="number" step="0.01" class="form-control" id="price" th:field="*{price}" required>
+        </div>
 
-        <form th:action="@{/books/add}" th:object="${book}" method="post">
-            <div class="mb-3">
-                <label for="title" class="form-label">Cím:</label>
-                <input type="text" class="form-control" id="title" th:field="*{title}" required>
-            </div>
-            <div class="mb-3">
-                <label for="author" class="form-label">Szerző:</label>
-                <input type="text" class="form-control" id="author" th:field="*{author}" required>
-            </div>
-            <div class="mb-3">
-                <label for="isbn" class="form-label">ISBN:</label>
-                <input type="text" class="form-control" id="isbn" th:field="*{isbn}" required>
-            </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Leírás:</label>
-                <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="coverUrl" class="form-label">Borítókép URL:</label>
-                <input type="url" class="form-control" id="coverUrl" th:field="*{coverUrl}">
-                <small class="form-text text-muted">Pl. https://example.com/cover.jpg</small>
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Ár:</label>
-                <input type="number" step="0.01" class="form-control" id="price" th:field="*{price}" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Könyv hozzáadása</button>
-            <a th:href="@{/books/list}" class="btn btn-secondary">Mégsem</a>
-        </form>
-    </th:block>
+        <button type="submit" class="btn btn-primary">Könyv hozzáadása</button>
+        <a th:href="@{/books/list}" class="btn btn-secondary">Mégsem</a>
+    </form>
+</th:block>
     <th:block th:fragment="bodyExtra">
     </th:block>
 </div>

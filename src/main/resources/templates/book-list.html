@@ -1,26 +1,26 @@
 <!DOCTYPE html>
-<html lang="hu" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{index :: layoutHead(~{::title}, ~{::headExtra})}"> <title>Könyvek listája - Könyvtár</title> <th:block th:fragment="headExtra">
+<html lang="hu" xmlns:th="http://www.thymeleaf.org"> <head th:replace="~{index :: layoutHead(~{::pageTitle}, ~{::headExtra})}"> <th:block th:fragment="pageTitle"> Könyvek listája - Könyvtár
 </th:block>
+    <th:block th:fragment="headExtra">
+    </th:block>
 </head>
 <body>
 
-<div th:replace="~{index :: body(mainContent='~{::mainContent}', title='~{::title}', headExtra='~{::headExtra}', bodyExtra='~{::bodyExtra}')}">
-    <th:block th:fragment="mainContent">
-        <h2 class="text-center mb-4">Elérhető könyvek</h2>
+<div th:replace="~{index :: body(mainContent='~{::mainContent}', title='~{::pageTitle}', headExtra='~{::headExtra}', bodyExtra='~{::bodyExtra}')}"> <th:block th:fragment="mainContent">
+    <h2 class="text-center mb-4">Elérhető könyvek</h2>
 
-        <div class="book-card-container" id="books-list">
-            <div th:each="book : ${books}" class="card h-100">
-                <img th:src="${book.coverUrl}" class="card-img-top" th:alt="${book.title}" style="height: 250px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${book.title}"></h5>
-                    <p class="card-text" th:text="${book.description}"></p>
-                    <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-primary">Tovább</a>
-                </div>
+    <div class="book-card-container" id="books-list">
+        <div th:each="book : ${books}" class="card h-100">
+            <img th:src="${book.coverUrl}" class="card-img-top" th:alt="${book.title}" style="height: 250px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${book.title}"></h5>
+                <p class="card-text" th:text="${book.description}"></p>
+                <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-primary">Tovább</a>
             </div>
-            <p th:if="${#lists.isEmpty(books)}">Jelenleg nincsenek könyvek a listában.</p>
         </div>
-    </th:block>
+        <p th:if="${#lists.isEmpty(books)}">Jelenleg nincsenek könyvek a listában.</p>
+    </div>
+</th:block>
     <th:block th:fragment="bodyExtra">
     </th:block>
 </div>

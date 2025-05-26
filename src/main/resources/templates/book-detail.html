@@ -1,43 +1,43 @@
 <!DOCTYPE html>
-<html lang="hu" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{index :: layoutHead(~{::title}, ~{::headExtra})}"> <title><span th:text="${book.title} + ' részletei - Könyvtár'"></span></title> <th:block th:fragment="headExtra">
+<html lang="hu" xmlns:th="http://www.thymeleaf.org"> <head th:replace="~{index :: layoutHead(~{::pageTitle}, ~{::headExtra})}"> <th:block th:fragment="pageTitle"> <span th:text="${book.title} + ' részletei - Könyvtár'"></span>
 </th:block>
+  <th:block th:fragment="headExtra">
+  </th:block>
 </head>
 <body>
 
-<div th:replace="~{index :: body(mainContent='~{::mainContent}', title='~{::title}', headExtra='~{::headExtra}', bodyExtra='~{::bodyExtra}')}">
-  <th:block th:fragment="mainContent">
-    <h2 class="text-center mb-4">Könyv részletei</h2>
+<div th:replace="~{index :: body(mainContent='~{::mainContent}', title='~{::pageTitle}', headExtra='~{::headExtra}', bodyExtra='~{::bodyExtra}')}"> <th:block th:fragment="mainContent">
+  <h2 class="text-center mb-4">Könyv részletei</h2>
 
-    <div th:if="${book != null}" class="card">
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img th:src="${book.coverUrl}" class="img-fluid rounded-start" th:alt="${book.title}" style="max-height: 400px; object-fit: contain;">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h3 class="card-title" th:text="${book.title}"></h3>
-            <p class="card-text"><strong>Szerző:</strong> <span th:text="${book.author}"></span></p>
-            <p class="card-text"><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
-            <p class="card-text"><strong>Leírás:</strong> <span th:text="${book.description}"></span></p>
-            <p class="card-text"><strong>Ár:</strong> <span th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 2, 'POINT')} + ' Ft'"></span></p>
+  <div th:if="${book != null}" class="card">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img th:src="${book.coverUrl}" class="img-fluid rounded-start" th:alt="${book.title}" style="max-height: 400px; object-fit: contain;">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h3 class="card-title" th:text="${book.title}"></h3>
+          <p class="card-text"><strong>Szerző:</strong> <span th:text="${book.author}"></span></p>
+          <p class="card-text"><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+          <p class="card-text"><strong>Leírás:</strong> <span th:text="${book.description}"></span></p>
+          <p class="card-text"><strong>Ár:</strong> <span th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 2, 'POINT')} + ' Ft'"></span></p>
 
-            <div class="mt-4">
-              <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-warning me-2">Szerkesztés</a>
-              <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?');">Törlés</button>
-              </form>
-            </div>
-            <a th:href="@{/books/list}" class="btn btn-secondary mt-3">Vissza a listához</a>
+          <div class="mt-4">
+            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-warning me-2">Szerkesztés</a>
+            <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-danger" onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?');">Törlés</button>
+            </form>
           </div>
+          <a th:href="@{/books/list}" class="btn btn-secondary mt-3">Vissza a listához</a>
         </div>
       </div>
     </div>
-    <div th:if="${book == null}">
-      <p class="alert alert-danger">A keresett könyv nem található.</p>
-      <a th:href="@{/books/list}" class="btn btn-secondary mt-3">Vissza a könyvek listájához</a>
-    </div>
-  </th:block>
+  </div>
+  <div th:if="${book == null}">
+    <p class="alert alert-danger">A keresett könyv nem található.</p>
+    <a th:href="@{/books/list}" class="btn btn-secondary mt-3">Vissza a könyvek listájához</a>
+  </div>
+</th:block>
   <th:block th:fragment="bodyExtra">
   </th:block>
 </div>
