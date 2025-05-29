@@ -1,7 +1,7 @@
 package com.example.bookshopweb.entity;
 
 import jakarta.persistence.*;
-import java.util.Objects; // Importáld az Objects osztályt
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -12,23 +12,23 @@ public class User {
     private Long id;
     private String username;
     private String password;
-    private String roles; // Ha szerepköröket is használsz
+    private String roles;
 
-    // Konstruktorok
+    // Constructors
     public User() {}
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
-    // Ha szerepköröket is használsz:
+
     public User(String username, String password, String roles) {
         this.username = username;
         this.password = password;
         this.roles = roles;
     }
 
-    // Getterek és setterek
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -61,17 +61,17 @@ public class User {
         this.roles = roles;
     }
 
-    // FONTOS: equals() és hashCode() metódusok a User entitáshoz
+    // equals() and hashCode() methods
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id); // Összehasonlítás az ID alapján
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id); // Hash az ID alapján
+        return id == null ? 0 : Objects.hash(id); // Handle null id
     }
 }

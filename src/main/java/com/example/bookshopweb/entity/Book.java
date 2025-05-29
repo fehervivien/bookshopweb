@@ -1,6 +1,7 @@
 package com.example.bookshopweb.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects; // Importáld az Objects osztályt
 
 @Entity
 @Table(name = "books")
@@ -98,5 +99,23 @@ public class Book {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    // --- equals() és hashCode() metódusok hozzáadva ---
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        // Fontos: Entitások összehasonlításakor az ID-t használjuk az egyediséghez.
+        // Ha az ID még null (azaz az entitás még nincs elmentve az adatbázisba),
+        // akkor csak akkor tekintjük egyenlőnek, ha ugyanaz a memória referenciája (this == o).
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id != null && Objects.equals(id, book.id);
+    }
+
+    @Override
+    public int hashCode() {
+        // A hashCode-ot az ID alapján generáljuk. Fontos, hogy ez konzisztens legyen az equals-szel.
+        return Objects.hash(id);
     }
 }

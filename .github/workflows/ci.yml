@@ -1,30 +1,37 @@
-name: Java CI with Maven
+name: Java CI with Maven # A workflow neve, ami megjelenik a GitHub Actions UI-ban
 
 on:
   push:
     branches:
-      - master
+      - master # Fut, ha push történik a master ágra
   pull_request:
     branches:
-      - master
+      - master # Fut, ha pull request történik a master ágra
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build: # A job neve
+    runs-on: ubuntu-latest # A futtató környezet
 
     steps:
-      # Checkout kód
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout code # A kód klónozása a futtatóra
+        uses: actions/checkout@v4 # Frissítettük a v2-ről v4-re (ajánlott a legújabb stabil verzió)
 
-      # JDK 17 beállítása
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
+      - name: Set up JDK 17 # JDK 17 beállítása
+        uses: actions/setup-java@v4 # Frissítettük a v2-ről v4-re
         with:
-          java-version: '17'
+          java-version: '17' # Megtartjuk a Java 17-et, ahogy kérted
           distribution: 'temurin'
+          cache: 'maven' # Maven cache beállítása a gyorsabb build-ekhez
 
-      # Build és tesztelés Maven-nel a megfelelő könyvtárban
-      - name: Build with Maven
-        run: mvn clean install
-        working-directory: ./bookshopweb
+      - name: Build and Test with Maven # Kód fordítása és tesztelése Maven-nel
+        # Az 'mvn clean install' parancs egy lépésben végzi el a tisztítást, fordítást, tesztelést és a JAR csomagolását.
+        # A '-DskipTests=false' paraméter explicit módon biztosítja, hogy a tesztek fussanak.
+        run: mvn clean install -DskipTests=false
+        working-directory: ./bookshopweb # Megtartjuk a working-directory beállítást
+
+      - name: Upload the packaged code # A csomagolt JAR fájl feltöltése artifactként
+        uses: actions/upload-artifact@v4 # Új lépés a buildelt JAR feltöltésére
+        with:
+          name: app-jar # Az artifact neve
+          # Dinamikus JAR fájlnév keresése a working-directory-n belül
+          path: ./bookshopweb/target/*.jar
