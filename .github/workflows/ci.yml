@@ -24,16 +24,11 @@ jobs:
           cache: 'maven' # Maven cache beállítása a gyorsabb build-ekhez
 
       - name: Build and Test with Maven # Kód fordítása és tesztelése Maven-nel
-        run: mvn clean install -DskipTests=false
-        # Módosítva: eltávolítottuk a vezető './' karaktert.
-        # Így a GitHub Actions a repository gyökeréhez képest fogja keresni a 'bookshopweb' mappát.
-        working-directory: bookshopweb
+        run: mvn clean install -DskipTests=false # A tesztek futtatása is megtörténik
 
       - name: Upload the packaged code # A csomagolt JAR fájl feltöltése artifactként
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
-          # A JAR fájl útvonala a working-directory figyelembevételével
-          # Mivel a 'bookshopweb' lett a working-directory, a target mappa azon belül lesz.
-          # Így a 'bookshopweb/' előtagot kell használni a gyökér repositoryhoz képest.
-          path: /target/*.jar
+          # Mivel a 'pom.xml' a gyökérben van, a 'target' mappa is a gyökérben lesz.
+          path: target/*.jar
