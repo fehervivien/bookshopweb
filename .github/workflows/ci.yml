@@ -24,14 +24,16 @@ jobs:
           cache: 'maven' # Maven cache beállítása a gyorsabb build-ekhez
 
       - name: Build and Test with Maven # Kód fordítása és tesztelése Maven-nel
-        # Az 'mvn clean install' parancs egy lépésben végzi el a tisztítást, fordítást, tesztelést és a JAR csomagolását.
-        # A '-DskipTests=false' paraméter explicit módon biztosítja, hogy a tesztek fussanak.
         run: mvn clean install -DskipTests=false
-        working-directory: ./bookshopweb # Megtartjuk a working-directory beállítást
+        # Módosítva: eltávolítottuk a vezető './' karaktert.
+        # Így a GitHub Actions a repository gyökeréhez képest fogja keresni a 'bookshopweb' mappát.
+        working-directory: bookshopweb
 
       - name: Upload the packaged code # A csomagolt JAR fájl feltöltése artifactként
-        uses: actions/upload-artifact@v4 # Új lépés a buildelt JAR feltöltésére
+        uses: actions/upload-artifact@v4
         with:
-          name: app-jar # Az artifact neve
-          # Dinamikus JAR fájlnév keresése a working-directory-n belül
-          path: ./bookshopweb/target/*.jar
+          name: app-jar
+          # A JAR fájl útvonala a working-directory figyelembevételével
+          # Mivel a 'bookshopweb' lett a working-directory, a target mappa azon belül lesz.
+          # Így a 'bookshopweb/' előtagot kell használni a gyökér repositoryhoz képest.
+          path: bookshopweb/target/*.jar
