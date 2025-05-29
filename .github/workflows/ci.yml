@@ -36,4 +36,4 @@ jobs:
           # A JAR fájl útvonala a working-directory figyelembevételével
           # Mivel a 'bookshopweb' lett a working-directory, a target mappa azon belül lesz.
           # Így a 'bookshopweb/' előtagot kell használni a gyökér repositoryhoz képest.
-          path: bookshopweb/target/*.jar
+          path: /target/*.jar
