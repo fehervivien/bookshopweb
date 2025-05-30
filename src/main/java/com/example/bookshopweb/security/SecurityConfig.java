@@ -14,15 +14,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/*
+* SecurityConfig osztály felelős a biztonsági konfigurációért.
+* Ez a konfiguráció biztosítja, hogy a felhasználók csak a megfelelő
+* jogosultságokkal rendelkező útvonalakat érhessék el.
+* */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    // UserDetailsService bean, amely a felhasználói adatok betöltésére szolgál.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Konfigurálja a Spring Security-t, hogy hogyan kezelje,
+    // a felhasználónév/jelszó alapú bejelentkezést
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -31,6 +38,10 @@ public class SecurityConfig {
         return new ProviderManager(authenticationProvider);
     }
 
+    // A webes alkalmazás biztonságának beállítása.
+    // Biztonsági szűrőlánc (SecurityFilterChain): Az összes HTTP kérést feldolgozza,
+    // és eldönti, hogy egy felhasználó hozzáférhet-e egy adott erőforráshoz
+    // és hogyan történjen az autentikáció és a kijelentkezés.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -44,11 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("/login"),
                                 new AntPathRequestMatcher("/register"),
-                                // Módosított elérési utak a statikus fájlokhoz a visszajelzésed alapján
-                                new AntPathRequestMatcher("/style.css"), // Itt már nem /css/style.css
-                                // new AntPathRequestMatcher("/js/**"), // Ezt eltávolítjuk, ha nincs js mappa és script.js
-                                // new AntPathRequestMatcher("/images/**"), // Ezt eltávolítjuk, ha nincs images mappa és logo.png
-                                // new AntPathRequestMatcher("/favicon.ico"), // Ezt eltávolítjuk, ha nincs favicon.ico
+                                new AntPathRequestMatcher("/style.css"),
                                 new AntPathRequestMatcher("/header.jpg"),
                                 new AntPathRequestMatcher("/book.jpg"),
                                 new AntPathRequestMatcher("/hatter.jpg"),

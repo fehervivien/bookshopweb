@@ -3,35 +3,46 @@ package com.example.bookshopweb.service;
 import com.example.bookshopweb.entity.User;
 import com.example.bookshopweb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails; // ÚJ IMPORT
-import org.springframework.security.core.userdetails.UserDetailsService; // ÚJ IMPORT
-import org.springframework.security.core.userdetails.UsernameNotFoundException; // ÚJ IMPORT
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Collections;
 
-import java.util.Collections; // Szükséges lehet az üres jogosultságlistához
+/*
+ * UserServiceImpl osztály: A felhasználók kezelésére szolgáló szolgáltatás
+ * implementációja.
+ * Implementálja a UserService és UserDetailsService interfészeket.
+ * UserDetailsService:
+ * Hozzá tartozó osztályok: User, UserRepository
+ */
 
-@Service
-// A UserDetailsService interfészt kell implementálni a Spring Security számára
+// UserDetailsService: Egy interfész a Spring Security keretrendszerből,
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    // Egy interfész a jelszavak titkosítására és ellenőrzésére.
     private final PasswordEncoder passwordEncoder;
 
+    // Konstruktor, amely inicializálja a UserRepository-t és a PasswordEncoder-t
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @Override
     @Transactional
+    // Regisztrál egy új felhasználót
     public User registerNewUser(User user) {
-        if (userRepository.findByUsername(user.getUsername()) != null) { // existsByUsername helyett findByUsername
+        if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new RuntimeException("A felhasználónév már foglalt: " + user.getUsername());
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Jelszó hashelése
+        // Titkosítjuk a jelszót a PasswordEncoder segítségével
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

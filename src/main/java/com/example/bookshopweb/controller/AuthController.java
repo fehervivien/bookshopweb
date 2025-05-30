@@ -11,12 +11,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam; // A login error/logout paraméterekhez
 
-
+/* AuthController: A regisztrációs és bejelentkezési funkciókhoz
+   szükséges vezérlőosztály
+   Hozzá tartozó osztályok: UserService, User
+*/
 @Controller
 public class AuthController {
 
     private final UserService userService;
 
+    // Konstruktor, amely injektálja a UserService-t,
+    // ez felelős a felhasználói műveletekért
     @Autowired
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -41,15 +46,16 @@ public class AuthController {
             model.addAttribute("errorMessage", e.getMessage());
             return "register";
         }
-        return "redirect:/login?registered=true"; // Sikeres regisztráció után a login oldalra
+        return "redirect:/login?registered=true";
     }
 
-    // Bejelentkezési űrlap megjelenítése
+    // Bejelentkezési űrlap megjelenítése, és kezelése
     @GetMapping("/login")
     public String showLoginForm(@RequestParam(value = "error", required = false) String error,
                                 @RequestParam(value = "logout", required = false) String logout,
                                 @RequestParam(value = "registered", required = false) String registered,
                                 Model model) {
+        // Ha van hiba, logout vagy regisztrációs üzenet,
         if (error != null) {
             model.addAttribute("errorMessage", "Hibás felhasználónév vagy jelszó.");
         }
@@ -59,6 +65,6 @@ public class AuthController {
         if (registered != null) {
             model.addAttribute("message", "Sikeres regisztráció! Kérjük, jelentkezzen be.");
         }
-        return "login"; // Ez a sablonfájl lesz
+        return "login";
     }
 }

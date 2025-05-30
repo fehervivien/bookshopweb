@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * BookService osztály: A könyvek adatainak kezelésére szolgál.
+ * Ez az osztály tartalmazza a könyvek CRUD műveleteit, valamint a felhasználóval
+ * kapcsolatos műveleteket is.
+ * Hozzá tartozó osztályok: Book, User, BookRepository
+ */
 @Service
 public class BookService {
 
@@ -35,13 +41,13 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    // Új metódus: Könyv mentése a felhasználóval
+    // Könyv mentése a felhasználóval
     public void saveBook(Book book, User user) {
         book.setUser(user);
         bookRepository.save(book);
     }
 
-    // Új metódus: Könyvek lekérése felhasználó alapján
+    // Könyvek lekérése felhasználó alapján
     public List<Book> getBooksByUser(User user) {
         return bookRepository.findByUser(user);
     }

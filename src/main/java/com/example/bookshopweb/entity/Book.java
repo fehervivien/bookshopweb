@@ -3,6 +3,13 @@ package com.example.bookshopweb.entity;
 import jakarta.persistence.*;
 import java.util.Objects; // Importáld az Objects osztályt
 
+/**
+ * A Book osztály: A könyvek adatainak tárolására szolgál.
+ * Minden könyv rendelkezik egyedi azonosítóval, címmel, szerzővel,
+ * ISBN számmal, leírással, borító URL-lel és árral.
+ * Ezen kívül kapcsolódik egy felhasználóhoz, aki hozzáadta a könyvet.
+ * Hozzá tartozó osztályok: User
+ */
 @Entity
 @Table(name = "books")
 public class Book {
@@ -17,10 +24,14 @@ public class Book {
     private String coverUrl;
     private Double price;
 
-    // Új mező: Kapcsolat a felhasználóval
-    @ManyToOne(fetch = FetchType.LAZY) // Sok könyv tartozik egy felhasználóhoz
-    @JoinColumn(name = "user_id") // A foreign key oszlop neve az 'books' táblában
-    private User user; // A könyvet hozzáadó felhasználó
+    // Sok könyv tartozik egy felhasználóhoz
+    // LAZY: a felhasználó adatai csak akkor töltődnek be,
+    // amikor ténylegesen szükség van rájuk.
+    @ManyToOne(fetch = FetchType.LAZY)
+    // A könyvet hozzáadó felhasználó azonosítója
+    @JoinColumn(name = "user_id")
+    // A könyvet hozzáadó felhasználó
+    private User user;
 
     // --- Konstruktorok ---
     public Book() {
@@ -101,21 +112,19 @@ public class Book {
         this.user = user;
     }
 
-    // --- equals() és hashCode() metódusok hozzáadva ---
+    // equals metódus: az ID alapján hasonlítja össze a könyveket.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        // Fontos: Entitások összehasonlításakor az ID-t használjuk az egyediséghez.
-        // Ha az ID még null (azaz az entitás még nincs elmentve az adatbázisba),
-        // akkor csak akkor tekintjük egyenlőnek, ha ugyanaz a memória referenciája (this == o).
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
         return id != null && Objects.equals(id, book.id);
     }
 
+    // hashCode metódus: Visszaadja a felhasználó azonosítójának (id)
+    // hash kódját.
     @Override
     public int hashCode() {
-        // A hashCode-ot az ID alapján generáljuk. Fontos, hogy ez konzisztens legyen az equals-szel.
-        return Objects.hash(id);
+       return Objects.hash(id);
     }
 }

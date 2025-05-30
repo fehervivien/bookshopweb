@@ -1,34 +1,35 @@
-name: Java CI with Maven # A workflow neve, ami megjelenik a GitHub Actions UI-ban
+name: Java CI with Maven
 
 on:
   push:
     branches:
-      - master # Fut, ha push történik a master ágra
+      - master
   pull_request:
     branches:
-      - master # Fut, ha pull request történik a master ágra
+      - master
 
 jobs:
-  build: # A job neve
-    runs-on: ubuntu-latest # A futtató környezet
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code # A kód klónozása a futtatóra
-        uses: actions/checkout@v4 # Frissítettük a v2-ről v4-re (ajánlott a legújabb stabil verzió)
+      # A kód klónozása a futtatóra
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17 # JDK 17 beállítása
-        uses: actions/setup-java@v4 # Frissítettük a v2-ről v4-re
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: '17' # Megtartjuk a Java 17-et, ahogy kérted
+          java-version: '17'
           distribution: 'temurin'
-          cache: 'maven' # Maven cache beállítása a gyorsabb build-ekhez
+          cache: 'maven'
 
-      - name: Build and Test with Maven # Kód fordítása és tesztelése Maven-nel
-        run: mvn clean install -DskipTests=false # A tesztek futtatása is megtörténik
+      - name: Build and Test with Maven
+        run: mvn clean install -DskipTests=false
 
-      - name: Upload the packaged code # A csomagolt JAR fájl feltöltése artifactként
+      # A csomagolt JAR fájl feltöltése artifactként
+      - name: Upload the packaged code
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
-          # Mivel a 'pom.xml' a gyökérben van, a 'target' mappa is a gyökérben lesz.
           path: target/*.jar

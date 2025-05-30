@@ -3,6 +3,10 @@ package com.example.bookshopweb.entity;
 import jakarta.persistence.*;
 import java.util.Objects;
 
+/* User osztály: a felhasználók adatainak tárolására szolgál,
+ * tartalmazza a felhasználó azonosítóját, felhasználónevét,
+ * jelszavát és szerepköreit.
+* */
 @Entity
 @Table(name = "users")
 public class User {
@@ -14,14 +18,17 @@ public class User {
     private String password;
     private String roles;
 
-    // Constructors
+    // Konstruktorok
     public User() {}
 
+    // Konstruktor: a felhasználó alap bejelentkezési adatainak
+    // inicializálása.
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
-
+    // Konstruktor: a felhasználó alap bejelentkezési adatainak
+    // + szerepköreinek inicializálása.
     public User(String username, String password, String roles) {
         this.username = username;
         this.password = password;
@@ -61,7 +68,7 @@ public class User {
         this.roles = roles;
     }
 
-    // equals() and hashCode() methods
+    // equals: összehasonlítja a felhasználókat az azonosítójuk alapján.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,6 +77,7 @@ public class User {
         return Objects.equals(id, user.id);
     }
 
+    // hashCode: visszaadja a felhasználó azonosítójának hash kódját.
     @Override
     public int hashCode() {
         return id == null ? 0 : Objects.hash(id); // Handle null id
