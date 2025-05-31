@@ -1,5 +1,7 @@
+mvn clean install
 mvn clean test jacoco:report
 tree /F /A
+mvn clean install -X > full_log.txt 2>&1
 http://localhost:8080/books/list
 
 INSERT INTO BOOK (title, author, price, isbn, description, cover_url) VALUES
