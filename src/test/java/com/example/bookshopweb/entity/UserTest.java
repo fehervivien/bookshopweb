@@ -2,10 +2,13 @@ package com.example.bookshopweb.entity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * UserTest: A User osztály tesztelésére szolgáló osztály
+ * Hozzá tartozó osztályok: User
+ */
 
 public class UserTest {
 
@@ -15,8 +18,8 @@ public class UserTest {
     private User userWithNullId;
 
     @BeforeEach
+    // Minden teszt előtt inicializálja a User objektumokat
     void setUp() {
-        // Inicializálunk felhasználókat a tesztekhez
         user1 = new User();
         user1.setId(1L);
         user1.setUsername("user_one");
@@ -27,20 +30,21 @@ public class UserTest {
         user2.setId(2L);
         user2.setUsername("user_two");
         user2.setPassword("pass2");
-        user2.setRoles("ROLE_ADMIN"); // Más szerepkör
+        user2.setRoles("ROLE_ADMIN");
 
         user3 = new User();
-        user3.setId(1L); // Ugyanaz az ID, mint user1
-        user3.setUsername("user_three"); // Más felhasználónév
-        user3.setPassword("another_pass"); // Más jelszó
-        user3.setRoles("ROLE_GUEST"); // Más szerepkör
+        user3.setId(1L);
+        user3.setUsername("user_three");
+        user3.setPassword("another_pass");
+        user3.setRoles("ROLE_GUEST");
 
-        userWithNullId = new User(); // ID nélkül
+        userWithNullId = new User();
         userWithNullId.setUsername("new_user");
         userWithNullId.setPassword("new_pass");
     }
 
     @Test
+    // Teszteli az alapértelmezett konstruktor működését, a mezők null értékét
     void testDefaultConstructor() {
         User user = new User();
         assertNull(user.getId(), "Az ID-nek null-nak kell lennie az alapértelmezett konstruktor után.");
@@ -50,6 +54,8 @@ public class UserTest {
     }
 
     @Test
+    // Teszteli a 2-argumentumú konstruktor működését
+    // (User(String username, String password))
     void testTwoArgConstructor() {
         String username = "testuser_two_args";
         String password = "testpass_two_args";
@@ -62,6 +68,8 @@ public class UserTest {
     }
 
     @Test
+    // Teszteli a 3-argumentumú konstruktor működését
+    // (User(String username, String password, String roles))
     void testThreeArgConstructor() {
         String username = "testuser_three_args";
         String password = "testpass_three_args";
@@ -75,9 +83,9 @@ public class UserTest {
     }
 
     @Test
+    // Teszteli a getterek és setterek működését
     void testGettersAndSetters() {
         User user = new User();
-
         Long id = 5L;
         String username = "setter_test_user";
         String password = "setter_test_pass";
@@ -95,55 +103,63 @@ public class UserTest {
     }
 
     @Test
+    // Teszteli az equals metódust különböző esetekben
     void testEquals_SameId_ShouldBeEqual() {
-        // Ugyanaz az ID, de más mezők, mégis egyenlőnek kell lennie
         assertTrue(user1.equals(user3), "Az azonos ID-jű felhasználóknak egyenlőnek kell lenniük.");
         assertEquals(user1.hashCode(), user3.hashCode(), "Az azonos ID-jű felhasználóknak azonos hashCode-dal kell rendelkezniük.");
     }
 
     @Test
+    // Teszteli az equals metódust, ha az ID null
     void testEquals_DifferentId_ShouldNotBeEqual() {
-        // Különböző ID-k
         assertFalse(user1.equals(user2), "A különböző ID-jű felhasználóknak nem szabad egyenlőnek lenniük.");
         assertNotEquals(user1.hashCode(), user2.hashCode(), "A különböző ID-jű felhasználóknak különböző hashCode-dal kell rendelkezniük.");
     }
 
     @Test
+    // Teszteli az equals metódust,
+    // ha az egyik felhasználónak null az ID-je
     void testEquals_NullId_DifferentObjects_ShouldBeEqual() {
-        // Két külön objektum, mindkettőnek null az ID-je
         User anotherUserWithNullId = new User();
         anotherUserWithNullId.setUsername("another_new_user");
         anotherUserWithNullId.setPassword("another_new_pass");
 
-        // Az Objects.equals(null, null) true, tehát ezek egyenlőek lesznek az equals metódus szerint
         assertTrue(userWithNullId.equals(anotherUserWithNullId), "Két null ID-jű, de különböző objektum egyenlőnek kell, hogy legyen.");
         assertEquals(userWithNullId.hashCode(), anotherUserWithNullId.hashCode(), "Két null ID-jű objektumnak azonos hashCode-dal kell rendelkeznie.");
     }
 
     @Test
+    // Ellenőrzi, hogy egy objektum saját magával
+    // összehasonlítva mindig egyenlő-e
     void testEquals_SameObject_ShouldBeEqual() {
         assertTrue(user1.equals(user1), "Az objektumnak saját magával egyenlőnek kell lennie.");
     }
 
     @Test
+    // Ellenőrzi, hogy az equals metódus nem ad-e vissza true-t,
+    // ha az összehasonlított objektum null
     void testEquals_NullObject_ShouldNotBeEqual() {
         assertFalse(user1.equals(null), "Az objektumnak nem szabad null-lal egyenlőnek lennie.");
     }
 
     @Test
+    // Ellenőrzi, hogy az equals metódus nem ad-e vissza true-t,
+    // ha az összehasonlított objektum más osztályú
     void testEquals_DifferentClass_ShouldNotBeEqual() {
         Object obj = new Object();
         assertFalse(user1.equals(obj), "Az objektumnak nem szabad más osztályú objektummal egyenlőnek lennie.");
     }
 
     @Test
+    // Ellenőrzi hogy az equals metódus konzisztens-e
+    // (ugyanazt az true vagy false értéket kell, hogy visszaadják)
     void testHashCode_Consistency() {
-        // hashCode konzisztencia: ha equals true, akkor hashCode-ok is egyenlőek
         assertTrue(user1.equals(user3));
         assertEquals(user1.hashCode(), user3.hashCode(), "A hashCode-nak konzisztensnek kell lennie az equals-szel.");
     }
 
     @Test
+    // Ellenőrzi, hogy null ID esetén is megfelelően működik-e a hashCode
     void testHashCode_NullId() {
         // hashCode tesztelése null ID esetén
         User user = new User(); // ID = null

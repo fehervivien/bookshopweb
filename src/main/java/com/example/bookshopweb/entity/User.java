@@ -22,13 +22,13 @@ public class User {
     public User() {}
 
     // Konstruktor: a felhasználó alap bejelentkezési adatainak
-    // inicializálása.
+    // inicializálása.(2 argumentumú konstruktor)
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
     // Konstruktor: a felhasználó alap bejelentkezési adatainak
-    // + szerepköreinek inicializálása.
+    // + szerepköreinek inicializálása. (3 argumentumú konstruktor)
     public User(String username, String password, String roles) {
         this.username = username;
         this.password = password;

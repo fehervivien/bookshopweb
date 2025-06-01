@@ -40,7 +40,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 
+/*
+* A BookController osztályt teszteli.
+* Teszteli a könyvek listázását, hozzáadását, szerkesztését és törlését.
+* */
 
+// WebMvcTest: Lehetővé teszi a kontroller tesztelését anélkül,
+// hogy az egész alkalmazást elindítanánk.
 @WebMvcTest(controllers = BookController.class)
 public class BookControllerTest {
 
@@ -65,20 +71,20 @@ public class BookControllerTest {
     private static final String MOCK_USERNAME = "testuser";
     private static final String ANOTHER_USERNAME = "anotheruser";
 
-    // ÚJ: Belső konfigurációs osztály a Thymeleaf Security Dialektus regisztrálásához
+
     @TestConfiguration
+    // Belső konfigurációs osztály, azért hogy a Thymeleaf sablonokban
+    // használhassuk a Spring Security funkciókat.
     static class ThymeleafSecurityTestConfig {
         @Bean
         public SpringTemplateEngine templateEngine(SpringSecurityDialect securityDialect) {
             SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-            // Hozzáadjuk a Spring Security Dialektust
             templateEngine.addDialect(securityDialect);
-            // Ha használsz más dialektusokat is, itt add hozzá őket.
-            // pl. templateEngine.addDialect(new org.thymeleaf.templatemode.TemplateModeDialect());
             return templateEngine;
         }
 
         @Bean
+        // Spring Security funkciók használatát teszi elérhetővé a Thymeleaf sablonokban.
         public SpringSecurityDialect securityDialect() {
             return new SpringSecurityDialect();
         }
@@ -86,6 +92,7 @@ public class BookControllerTest {
 
 
     @BeforeEach
+    // Minden teszt előtt lefut, beállítja a MockMvc-t és a tesztadatokat.
     void setUp() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
@@ -136,12 +143,13 @@ public class BookControllerTest {
         when(userRepository.findByUsername(ANOTHER_USERNAME)).thenReturn(anotherUser);
     }
 
-    // --- listBooks Tesztek ---
+// listBooks  tesztek
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyvek listázására szolgáló teszt, amely ellenőrzi,
+    // hogy a felhasználó saját könyveit látja.
     void listBooks_shouldReturnBookListForCurrentUser() throws Exception {
         when(bookService.getBooksByUser(mockUser)).thenReturn(Arrays.asList(book1, book2));
-
         mockMvc.perform(get("/books/list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("book-list"))
@@ -155,9 +163,10 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyvek listázására szolgáló teszt, amely ellenőrzi,
+    // hogy a felhasználó más felhasználó könyveit nem látja.
     void listBooks_noBooksForUser_shouldReturnEmptyBookList() throws Exception {
         when(bookService.getBooksByUser(mockUser)).thenReturn(Collections.emptyList());
-
         mockMvc.perform(get("/books/list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("book-list"))
@@ -169,10 +178,11 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = "nonexistentuser")
+    // A könyvek listázására szolgáló teszt, amely ellenőrzi,
+    // hogy ha a felhasználó nem található, akkor az összes könyvet visszaadja.
     void listBooks_userNotFoundInRepo_shouldReturnAllBooksAsFallback() throws Exception {
         when(userRepository.findByUsername("nonexistentuser")).thenReturn(null);
         when(bookService.getAllBooks()).thenReturn(Arrays.asList(book1, book2, anotherUsersBook));
-
         mockMvc.perform(get("/books/list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("book-list"))
@@ -183,10 +193,11 @@ public class BookControllerTest {
         verify(bookService, times(1)).getAllBooks();
     }
 
-
-    // --- showAddBookForm Tesztek ---
+// AddBook tesztek
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyvek listázására szolgáló teszt, amely ellenőrzi,
+    // hogy ha a felhasználó nem található, akkor az üres könyvlistát adja vissza.
     void showAddBookForm_shouldReturnAddBookViewWithNewBook() throws Exception {
         mockMvc.perform(get("/books/add"))
                 .andExpect(status().isOk())
@@ -195,12 +206,12 @@ public class BookControllerTest {
                 .andExpect(model().attribute("book", instanceOf(Book.class)));
     }
 
-    // --- addBook Tesztek ---
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv hozzáadására szolgáló teszt, amely ellenőrzi,
+    // hogy érvényes könyv hozzáadása esetén átirányít a könyvek listájára.
     void addBook_validBook_shouldRedirectToList() throws Exception {
         doNothing().when(bookService).saveBook(any(Book.class), eq(mockUser));
-
         mockMvc.perform(post("/books/add")
                         .with(csrf())
                         .flashAttr("book", book1))
@@ -213,10 +224,12 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = "nonexistentuser")
+    // A könyv hozzáadására szolgáló teszt, amely ellenőrzi,
+    // hogy ha a felhasználó nem található, akkor a könyvet
+    // felhasználó nélkül menti el.
     void addBook_userNotFoundInRepo_shouldSaveBookWithoutUserAsFallback() throws Exception {
         when(userRepository.findByUsername("nonexistentuser")).thenReturn(null);
         doNothing().when(bookService).saveBook(any(Book.class));
-
         mockMvc.perform(post("/books/add")
                         .with(csrf())
                         .flashAttr("book", book1))
@@ -227,13 +240,15 @@ public class BookControllerTest {
         verify(bookService, times(0)).saveBook(any(Book.class), any(User.class));
     }
 
-
-    // --- viewBookDetails Tesztek ---
+// viewBookDetails tesztek
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv hozzáadására szolgáló teszt, amely ellenőrzi,
+    // hogy érvénytelen könyv hozzáadása esetén visszatér a
+    // hozzáadás űrlapra hibával.
+    // Érvénytelen könyv: null cím, üres szerző, stb.
     void viewBookDetails_bookFound_shouldReturnBookDetailView() throws Exception {
         when(bookService.getBookById(book1.getId())).thenReturn(Optional.of(book1));
-
         mockMvc.perform(get("/books/" + book1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("book-detail"))
@@ -243,9 +258,10 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv részleteinek megtekintésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a könyv nem található, akkor hibaüzenetet ad vissza.
     void viewBookDetails_bookNotFound_shouldReturnBookDetailViewWithError() throws Exception {
         when(bookService.getBookById(999L)).thenReturn(Optional.empty());
-
         mockMvc.perform(get("/books/999"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("book-detail"))
@@ -253,12 +269,13 @@ public class BookControllerTest {
                 .andExpect(model().attribute("errorMessage", is("A keresett könyv nem található.")));
     }
 
-    // --- showEditBookForm Tesztek ---
+// showEditBookForm
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv szerkesztésére szolgáló teszt, amely ellenőrzi,
+    // hogy a felhasználó saját könyvét szerkesztheti-e.
     void showEditBookForm_userOwnsBook_shouldReturnEditBookView() throws Exception {
         when(bookService.getBookById(book1.getId())).thenReturn(Optional.of(book1));
-
         mockMvc.perform(get("/books/edit/" + book1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("edit-book"))
@@ -268,9 +285,11 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv szerkesztésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a felhasználó nem saját könyvét próbálja szerkeszteni,
+    // akkor átirányítja a könyvek listájára.
     void showEditBookForm_userDoesNotOwnBook_shouldRedirectToList() throws Exception {
         when(bookService.getBookById(anotherUsersBook.getId())).thenReturn(Optional.of(anotherUsersBook));
-
         mockMvc.perform(get("/books/edit/" + anotherUsersBook.getId()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books/list"));
@@ -278,17 +297,20 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv szerkesztésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a könyv nem található, akkor átirányítja a könyvek listájára.
     void showEditBookForm_bookNotFound_shouldRedirectToList() throws Exception {
         when(bookService.getBookById(999L)).thenReturn(Optional.empty());
-
         mockMvc.perform(get("/books/edit/999"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books/list"));
     }
 
-    // --- updateBook Tesztek ---
+// updateBook tesztek
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv frissítésére szolgáló teszt, amely ellenőrzi,
+    // hogy a felhasználó saját könyvét frissítheti-e.
     void updateBook_userOwnsBook_shouldUpdateAndRedirectToList() throws Exception {
         Book updatedFormDataBook = new Book();
         updatedFormDataBook.setTitle("Updated Title");
@@ -312,9 +334,11 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv frissítésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a felhasználó nem saját könyvét próbálja frissíteni,
+    // akkor átirányítja a könyvek listájára.
     void updateBook_userDoesNotOwnBook_shouldRedirectToList() throws Exception {
         when(bookService.getBookById(anotherUsersBook.getId())).thenReturn(Optional.of(anotherUsersBook));
-
         mockMvc.perform(post("/books/update/" + anotherUsersBook.getId())
                         .with(csrf())
                         .flashAttr("updatedBook", new Book()))
@@ -326,6 +350,8 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv frissítésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a könyv nem található, akkor átirányítja a könyvek listájára.
     void updateBook_bookNotFound_shouldRedirectToList() throws Exception {
         when(bookService.getBookById(999L)).thenReturn(Optional.empty());
 
@@ -338,13 +364,14 @@ public class BookControllerTest {
         verify(bookService, times(0)).saveBook(any(Book.class));
     }
 
-    // --- deleteBook Tesztek ---
+// deleteBook tesztek
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv törlésére szolgáló teszt, amely ellenőrzi,
+    // hogy a felhasználó saját könyvét törölheti-e.
     void deleteBook_userOwnsBook_shouldDeleteAndRedirectToList() throws Exception {
         when(bookService.getBookById(book1.getId())).thenReturn(Optional.of(book1));
         doNothing().when(bookService).deleteBook(book1.getId());
-
         mockMvc.perform(post("/books/delete/" + book1.getId())
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -355,6 +382,9 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv törlésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a felhasználó nem saját könyvét próbálja törölni,
+    // akkor átirányítja a könyvek listájára anélkül, hogy törölné.
     void deleteBook_userDoesNotOwnBook_shouldRedirectToListWithoutDeleting() throws Exception {
         when(bookService.getBookById(anotherUsersBook.getId())).thenReturn(Optional.of(anotherUsersBook));
 
@@ -368,9 +398,11 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = MOCK_USERNAME)
+    // A könyv törlésére szolgáló teszt, amely ellenőrzi,
+    // hogy ha a könyv nem található, akkor átirányítja
+    // a könyvek listájára anélkül, hogy törölné.
     void deleteBook_bookNotFound_shouldRedirectToListWithoutDeleting() throws Exception {
         when(bookService.getBookById(999L)).thenReturn(Optional.empty());
-
         mockMvc.perform(post("/books/delete/999")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())

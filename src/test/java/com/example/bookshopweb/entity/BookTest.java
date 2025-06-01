@@ -4,23 +4,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * BookTest: A Book entitás tesztelésére szolgáló osztály.
+ * Ez az osztály ellenőrzi a Book osztály konstruktorait, gettereit és settereit.
+ * Hozzá tartozó osztályok: Book, User
+ */
+
 public class BookTest {
 
-    private User testUser; // Ezt a felhasználót fogjuk használni a Book user mezőjének teszteléséhez
+    private User testUser;
 
     @BeforeEach
     void setUp() {
-        // Inicializálunk egy egyszerű User objektumot, a Book teszteléséhez
-        // Ennek a User objektumnak nem kell perzisztáltnak lennie, csak egy egyszerű példány
         testUser = new User();
         testUser.setId(100L);
         testUser.setUsername("testuser");
-        testUser.setPassword("encoded_test_password"); // Csak egy placeholder
+        testUser.setPassword("encoded_test_password");
     }
 
     @Test
+    // Ellenőrzi az alapértelmezett konstruktor működését, a mezők null értékét.
     void testDefaultConstructor() {
-        // Ellenőrizzük, hogy az alapértelmezett konstruktor null értékekkel inicializálja-e a mezőket
         Book book = new Book();
         assertNull(book.getId(), "Az ID-nek null-nak kell lennie az alapértelmezett konstruktor után.");
         assertNull(book.getTitle(), "A Title-nek null-nak kell lennie.");
@@ -33,15 +37,14 @@ public class BookTest {
     }
 
     @Test
+    // Teszteli a paraméterezett konstruktort, amely beállítja a könyv mezőit.
     void testParameterizedConstructor() {
-        // Ellenőrizzük, hogy a paraméterezett konstruktor helyesen beállítja-e az értékeket
         String title = "A Gyűrűk Ura";
         String author = "J.R.R. Tolkien";
         String isbn = "978-0618053267";
         String description = "Egy fantasy eposz.";
         String coverUrl = "http://example.com/lotr_cover.jpg";
         Double price = 25.50;
-
         Book book = new Book(title, author, isbn, description, coverUrl, price);
 
         assertNull(book.getId(), "Az ID-nek null-nak kell lennie, mivel a paraméterezett konstruktor nem állítja be.");
@@ -55,10 +58,10 @@ public class BookTest {
     }
 
     @Test
+    // Teszteli a paraméterezett konstruktort, amely beállítja
+    // a könyv mezőit és a felhasználót.
     void testGettersAndSetters() {
-        // Teszteljük az összes getter és setter metódust
         Book book = new Book();
-
         Long id = 1L;
         String title = "A hobbit";
         String author = "J.R.R. Tolkien";
@@ -74,8 +77,9 @@ public class BookTest {
         book.setDescription(description);
         book.setCoverUrl(coverUrl);
         book.setPrice(price);
-        book.setUser(testUser); // Beállítjuk a felhasználót
+        book.setUser(testUser);
 
+        // Ellenőrizzük a gettereket és settereket
         assertEquals(id, book.getId(), "Az ID getter/setter hibás.");
         assertEquals(title, book.getTitle(), "A Title getter/setter hibás.");
         assertEquals(author, book.getAuthor(), "Az Author getter/setter hibás.");
@@ -84,7 +88,7 @@ public class BookTest {
         assertEquals(coverUrl, book.getCoverUrl(), "A CoverUrl getter/setter hibás.");
         assertEquals(price, book.getPrice(), "A Price getter/setter hibás.");
 
-        // Ellenőrizzük a felhasználó mezőt
+        // Ellenőrzi a felhasználó mezőt
         assertNotNull(book.getUser(), "A User nem lehet null.");
         assertEquals(testUser, book.getUser(), "A User objektum nem egyezik.");
         assertEquals(testUser.getId(), book.getUser().getId(), "A User ID nem egyezik.");

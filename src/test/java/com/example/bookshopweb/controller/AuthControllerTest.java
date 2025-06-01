@@ -19,6 +19,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/*
+* Az AuthController osztály regisztrációs és bejelentkezési funkciók
+* tesztelésére szolgál.
+* */
+
 @WebMvcTest(controllers = AuthController.class,
         excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 public class AuthControllerTest {
@@ -39,6 +44,7 @@ public class AuthControllerTest {
     }
 
     @Test
+    // A regisztrációs űrlap megjelenítésére szolgáló teszt
     void showRegistrationForm_shouldReturnRegisterViewWithNewUser() throws Exception {
         mockMvc.perform(get("/register"))
                 .andExpect(status().isOk())
@@ -48,24 +54,23 @@ public class AuthControllerTest {
     }
 
     @Test
+    // A regisztrációs űrlap beküldésének tesztelése érvényes felhasználóval
     void registerUser_validUser_shouldRedirectToLoginSuccess() throws Exception {
-        // Módosítva: A doNothing() helyett when().thenReturn()
-        // Feltételezve, hogy a registerNewUser egy User objektummal tér vissza
         when(userService.registerNewUser(any(User.class))).thenReturn(new User());
-
         mockMvc.perform(post("/register")
                         .flashAttr("user", testUser)
                         .param("confirmPassword", "password123"))
+                // Ellenőrzi, hogy átirányít-e
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?registered=true"));
     }
 
     @Test
+    // A regisztrációs űrlap beküldésének tesztelése érvénytelen felhasználóval
     void registerUser_usernameTaken_shouldReturnRegisterViewWithError() throws Exception {
         String errorMessage = "A felhasználónév már foglalt.";
         doThrow(new RuntimeException(errorMessage))
                 .when(userService).registerNewUser(any(User.class));
-
         mockMvc.perform(post("/register")
                         .flashAttr("user", testUser)
                         .param("confirmPassword", "password123"))
@@ -75,8 +80,8 @@ public class AuthControllerTest {
                 .andExpect(model().attribute("errorMessage", is(errorMessage)));
     }
 
-
     @Test
+    // A bejelentkezési űrlap megjelenítésének tesztelése különböző paraméterekkel
     void showLoginForm_noParams_shouldReturnLoginView() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
@@ -86,6 +91,7 @@ public class AuthControllerTest {
     }
 
     @Test
+    // A bejelentkezési űrlap megjelenítésének tesztelése hibával
     void showLoginForm_withErrorParam_shouldReturnLoginViewWithError() throws Exception {
         mockMvc.perform(get("/login").param("error", "true"))
                 .andExpect(status().isOk())
@@ -95,6 +101,7 @@ public class AuthControllerTest {
     }
 
     @Test
+    // A bejelentkezési űrlap megjelenítésének tesztelése kijelentkezési paraméterrel
     void showLoginForm_withLogoutParam_shouldReturnLoginViewWithMessage() throws Exception {
         mockMvc.perform(get("/login").param("logout", "true"))
                 .andExpect(status().isOk())
@@ -104,6 +111,7 @@ public class AuthControllerTest {
     }
 
     @Test
+    // A bejelentkezési űrlap megjelenítésének tesztelése regisztrációs paraméterrel
     void showLoginForm_withRegisteredParam_shouldReturnLoginViewWithMessage() throws Exception {
         mockMvc.perform(get("/login").param("registered", "true"))
                 .andExpect(status().isOk())

@@ -13,6 +13,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/* A BookRepository osztály tesztelésére szolgáló osztály
+ *  Hozzá tartozó osztályok: Book, User
+*/
+
 @DataJpaTest
 public class BookRepositoryTest {
 
@@ -27,7 +31,7 @@ public class BookRepositoryTest {
 
     private User user1;
     private User user2;
-    private User userWithNoBooks; // Új felhasználó, akihez nem tartozik könyv
+    private User userWithNoBooks;
     private Book book1;
     private Book book2;
     private Book book3;
@@ -36,22 +40,19 @@ public class BookRepositoryTest {
     void setUp() {
         bookRepository.deleteAll();
         userRepository.deleteAll();
-
-        // Felhasználók létrehozása és perzisztálása
+        // Felhasználók létrehozása
         user1 = new User("testuser1", "pass1");
+        // Felhasználó perzisztálása (tartós tárolás)
         entityManager.persist(user1);
 
         user2 = new User("testuser2", "pass2");
         entityManager.persist(user2);
 
-        // Létrehozunk egy felhasználót, akihez NEM rendelünk könyvet
+        // Létrehoz egy felhasználót, akihez NEM rendel könyvet
         userWithNoBooks = new User("user_without_books", "nopass");
         entityManager.persist(userWithNoBooks);
 
-
-        // Azonnali flush és clear a felhasználók perzisztálása után,
-        // majd a felhasználók újbóli betöltése, hogy Managed állapotban legyenek
-        // a könyvek hozzárendelésekor.
+        // Az entitások tényleges perzisztálása az adatbázisba
         entityManager.flush();
         entityManager.clear();
 
@@ -60,8 +61,8 @@ public class BookRepositoryTest {
         user2 = entityManager.find(User.class, user2.getId());
         userWithNoBooks = entityManager.find(User.class, userWithNoBooks.getId()); // Ezt is újra betöltjük
 
-
-        // Könyvek létrehozása és perzisztálása, most már a kezelt felhasználói objektumokkal
+        // Könyvek létrehozása és perzisztálása, most már
+        // a kezelt felhasználói objektumokkal
         book1 = new Book("Title1", "Author1", "ISBN1", "Desc1", "url1", 10.0);
         book1.setUser(user1);
         entityManager.persist(book1);
@@ -78,14 +79,13 @@ public class BookRepositoryTest {
     }
 
     @Test
+    // A felhasználó által létrehozott könyvek lekérése
     void testFindByUser() {
-        // Amikor
         List<Book> booksFoundByUser1 = bookRepository.findByUser(user1);
         List<Book> booksFoundByUser2 = bookRepository.findByUser(user2);
-        // Itt most már a userWithNoBooks objektumot adjuk át, ami perzisztált (Managed)
         List<Book> booksFoundByUserWithNoBooks = bookRepository.findByUser(userWithNoBooks);
 
-        // Akkor
+        // Ellenőrizzük, hogy a lekért könyvek listája helyes-e
         assertThat(booksFoundByUser1).isNotNull();
         assertThat(booksFoundByUser1).hasSize(2);
         assertThat(booksFoundByUser1).containsExactlyInAnyOrder(book1, book2);
@@ -100,6 +100,7 @@ public class BookRepositoryTest {
     }
 
     @Test
+    // Teszteli, hogy egy új könyv sikeresen elmenthető-e
     void testSaveBook() {
         User newUser = new User("new_saver_user", "new_pass");
         entityManager.persist(newUser);
@@ -107,22 +108,28 @@ public class BookRepositoryTest {
         entityManager.clear();
         newUser = entityManager.find(User.class, newUser.getId());
 
+        // Új könyv létrehozása és elmentése + felhasználó hozzárendelése
         Book newBook = new Book("New Book", "New Author", "New ISBN", "New Desc", "NewUrl", 50.0);
         newBook.setUser(newUser);
 
+        // Könyv elmentése a repository-ba
         Book savedBook = bookRepository.save(newBook);
         entityManager.flush();
         entityManager.clear();
 
+        // Ellenőrizzük, hogy a könyv sikeresen elmentődött-e
         assertThat(savedBook).isNotNull();
         assertThat(savedBook.getId()).isNotNull();
+        // Könyv keresése az ID alapján
         Optional<Book> foundBook = bookRepository.findById(savedBook.getId());
+        // Ellenőrizzük, hogy a könyv megtalálható-e
         assertThat(foundBook).isPresent();
         assertThat(foundBook.get().getTitle()).isEqualTo("New Book");
         assertThat(foundBook.get().getUser().getUsername()).isEqualTo("new_saver_user");
     }
 
     @Test
+    // Teszteli, hogy egy könyv sikeresen lekérdezhető-e az ID alapján
     void testFindById() {
         Optional<Book> foundBook1 = bookRepository.findById(book1.getId());
         Optional<Book> foundNonExistentBook = bookRepository.findById(999L);
@@ -135,6 +142,7 @@ public class BookRepositoryTest {
     }
 
     @Test
+    // Teszteli, hogy az összes könyv sikeresen lekérdezhető-e
     void testFindAll() {
         List<Book> allBooks = bookRepository.findAll();
 
@@ -144,6 +152,7 @@ public class BookRepositoryTest {
     }
 
     @Test
+    // Teszteli, hogy egy könyv sikeresen törölhető-e
     void testDeleteBook() {
         Long bookIdToDelete = book1.getId();
 
@@ -157,6 +166,7 @@ public class BookRepositoryTest {
     }
 
     @Test
+    // Teszteli, hogy a könyvek száma helyesen számolható-e
     void testCountBooks() {
         long count = bookRepository.count();
         assertThat(count).isEqualTo(3);

@@ -31,6 +31,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/* A SecurityConfig osztály tesztelésére szolgáló tesztosztály
+ * Hozzá tartozó osztályok: UserRepository, User
+*/
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class SecurityConfigTest {
@@ -48,9 +52,9 @@ public class SecurityConfigTest {
 
 
     @BeforeEach
+    // Minden teszt előtt beállítja a mock UserDetailsService-t
     void setupMockUserDetailsService() {
         userDetailsService = mock(UserDetailsService.class);
-
         String encodedTestPass = passwordEncoder.encode("testpass");
         String encodedAdminPass = passwordEncoder.encode("adminpass");
 
@@ -98,12 +102,16 @@ public class SecurityConfigTest {
 
     @Test
     @DisplayName("PasswordEncoder bean should be BCryptPasswordEncoder")
+    // Ellenőrzi, hogy a PasswordEncoder bean típusa BCryptPasswordEncoder,
+    // amely a jelszavak titkosítására szolgál.
     void passwordEncoderBeanTest(@Autowired PasswordEncoder passwordEncoder) {
         assertThat(passwordEncoder).isInstanceOf(BCryptPasswordEncoder.class);
     }
 
     @Test
     @DisplayName("Public endpoints should permit all access")
+    // Ellenőrzi, hogy a nyilvános végpontok (pl. /login, /register)
+    // mindenki számára elérhetők.
     void publicEndpointsPermitAll() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk());
@@ -111,17 +119,8 @@ public class SecurityConfigTest {
         mockMvc.perform(get("/register"))
                 .andExpect(status().isOk());
 
-        // Módosított útvonal
-        mockMvc.perform(get("/style.css")) // Itt már nem /css/style.css
+        mockMvc.perform(get("/style.css"))
                 .andExpect(status().isOk());
-
-        // Ezeket a sorokat eltávolítjuk vagy kikommenteljük, ha a fájlok nem léteznek:
-        // mockMvc.perform(get("/js/script.js"))
-        //         .andExpect(status().isOk());
-        // mockMvc.perform(get("/images/logo.png"))
-        //         .andExpect(status().isOk());
-        // mockMvc.perform(get("/favicon.ico"))
-        //         .andExpect(status().isOk());
 
         mockMvc.perform(get("/header.jpg"))
                 .andExpect(status().isOk());
@@ -136,6 +135,9 @@ public class SecurityConfigTest {
 
     @Test
     @DisplayName("Secured endpoints should redirect to login for unauthenticated users")
+    // Ellenőrzi, hogy a védett végpontok (pl. /books/list)
+    // átirányítanak a bejelentkezési oldalra, ha a felhasználó
+    // nincs bejelentkezve.
     void securedEndpointsRequireAuthentication() throws Exception {
         mockMvc.perform(get("/books/list"))
                 .andExpect(status().is3xxRedirection())
@@ -145,6 +147,8 @@ public class SecurityConfigTest {
     @Test
     @DisplayName("Secured endpoints should be accessible for authenticated users")
     @WithMockUser(username = "testuser", roles = "USER")
+    // Ellenőrzi, hogy a védett végpontok elérhetők-e
+    // a bejelentkezett felhasználók számára.
     void securedEndpointsAccessibleWithAuthentication() throws Exception {
         mockMvc.perform(get("/books/list"))
                 .andExpect(status().isOk());
@@ -152,6 +156,8 @@ public class SecurityConfigTest {
 
     @Test
     @DisplayName("Login with valid credentials should succeed and redirect to defaultSuccessUrl")
+    // Ellenőrzi, hogy a helyes felhasználónévvel és jelszóval
+    // történő bejelentkezés sikeres-e
     void loginWithValidCredentials() throws Exception {
         mockMvc.perform(formLogin("/login").user("testuser").password("testpass"))
                 .andExpect(authenticated())
@@ -160,6 +166,8 @@ public class SecurityConfigTest {
 
     @Test
     @DisplayName("Login with invalid credentials should fail and redirect to login?error")
+    // Ellenőrzi, hogy a hibás felhasználónévvel vagy jelszóval
+    // történő bejelentkezés sikertelen-e, és átirányítja a felhasználót
     void loginWithInvalidCredentials() throws Exception {
         mockMvc.perform(formLogin("/login").user("testuser").password("wrongpass"))
                 .andExpect(unauthenticated())
@@ -169,6 +177,8 @@ public class SecurityConfigTest {
     @Test
     @DisplayName("Logout should redirect to logoutSuccessUrl")
     @WithMockUser(username = "testuser", roles = "USER")
+    // Ellenőrzi, hogy a kijelentkezés sikeres-e,
+    // és átirányítja a felhasználót
     void logoutShouldRedirectToLoginWithLogoutParam() throws Exception {
         mockMvc.perform(logout("/logout"))
                 .andExpect(unauthenticated())
@@ -178,6 +188,9 @@ public class SecurityConfigTest {
     @Test
     @DisplayName("POST to logout with valid CSRF token should succeed and redirect")
     @WithMockUser(username = "testuser", roles = "USER")
+    // Ellenőrzi, hogy a kijelentkezés POST kéréssel
+    // és érvényes CSRF tokennel sikeres-e,
+    // és átirányítja a felhasználót a kijelentkezési oldalra.
     void logoutPostWithValidCsrfShouldRedirect() throws Exception {
         mockMvc.perform(post("/logout").with(csrf()))
                 .andExpect(status().isFound())
@@ -187,6 +200,9 @@ public class SecurityConfigTest {
     @Test
     @DisplayName("POST to logout without CSRF token should be forbidden")
     @WithMockUser(username = "testuser", roles = "USER")
+    // Ellenőrzi, hogy a kijelentkezés POST kérése
+    // érvényes CSRF token nélkül tiltott-e,
+    // és 403-as státuszkódot ad vissza.
     void logoutPostWithoutCsrfShouldBeForbidden() throws Exception {
         mockMvc.perform(post("/logout"))
                 .andExpect(status().isForbidden());
